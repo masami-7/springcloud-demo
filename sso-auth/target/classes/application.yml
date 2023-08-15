@@ -1,0 +1,50 @@
+server:
+  port: 9011
+spring:
+  datasource:
+    druid:
+      web-stat-filter:
+        enabled: true
+        url-pattern: "/*"
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+      stat-view-servlet:
+        url-pattern: "/druid/*"
+        # 登录名
+        login-username: admin
+        # 登录密码
+        login-password: 123456
+        enabled: true
+    dynamic:
+      primary: default
+      lazy: true
+#      strict: true
+      datasource:
+        default:
+          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:mysql://47.96.43.200:3306/sso
+          username: root
+          password: 'yl11111111.'
+        test:
+          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:mysql://47.96.43.200:3306/test1
+          username: root
+          password: 'yl11111111.'
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.96.43.200:8848
+  application:
+    name: sso-auth
+  redis:
+    host: 43.138.175.67
+    port: 6379
+    password: yl11111111.
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  thymeleaf:
+    cache: false
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

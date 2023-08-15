@@ -1,0 +1,84 @@
+server:
+  http:
+    port: 9000
+  port: 9527
+  ssl:
+    enabled: true
+    key-store: classpath:tomcat.keystore
+    key-store-type: PKCS12
+    key-store-password: 123456
+#custom:
+#  enable: true
+#spring:
+#  application:
+#    name: sso-gateway
+#  cloud:
+#    nacos:
+#      server-addr: 43.138.175.67:8848
+#      config:
+#        server-addr: 43.138.175.67:8848
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true #开启从注册中心动态创建路由的功能，利用微服务名称进行路由
+#      routes:
+#        - id: auth
+#          uri: lb://sso-auth #匹配后提供服务的路由地址
+#          predicates:
+#            - Path=/user/** #断言，服务端路径匹配的进行路由
+#  redis:
+#    host: 43.138.175.67
+#    port: 6379
+#    password: yl11111111.
+spring:
+  application:
+    name: sso-gateway
+  cloud:
+    nacos:
+      config:
+        server-addr: 47.96.43.200:8848
+#    loadbalancer:
+#      nacos:
+#        enabled: true
+  config:
+    import:
+      - optional:nacos:${spring.application.name}.yml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowType: time_based
+        slidingWindowSize: 10
+        #最少多少个开始统计失败率
+        minimumNumberOfCalls: 5
+        #半开状态下，最少多少个开始统计失败率
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+        recordExceptions:
+          - java.lang.Exception
+    instances:
+      backendA:
+        baseConfig: default
+  timelimiter:
+    instances:
+      backendA:
+        timeoutDuration: 2s
+        cancelRunningFuture: true
